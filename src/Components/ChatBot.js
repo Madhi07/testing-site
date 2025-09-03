@@ -6,39 +6,43 @@ const ChatBot = () => {
   const [input, setInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
-  
   const handleSend = async () => {
     if (!input.trim()) return;
 
-    
     setMessages((prev) => [...prev, { from: "user", text: input }]);
 
     try {
-    
       const response = await fetch("http://127.0.0.1:8000/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: input }),
+        body: JSON.stringify({ ddt_id:"50",question: input }),
       });
 
       const data = await response.json();
+      console.log("Bot Response:", data);
+
+      const { xpath, fill_value, answer, action } = data;
 
       // Add bot message
       setMessages((prev) => [
         ...prev,
         {
           from: "bot",
-          text: data.answer || "I found something.",
-          xpath: data.xpath || "",
-          action: data.action || "",
+          text: answer || "I found something.",
+          xpath: xpath || "",
+          action: action || "",
         },
       ]);
 
-      // If xpath exists, try to highlight/select element
-      if (data.xpath) {
+    
+      if (xpath) {
         try {
+          // Clean XPath if wrapped
+          const xpathMatch = xpath.match(/<--\s*XPath:\s*([^>]+)\s*-->/);
+          const cleanedXPath = xpathMatch ? xpathMatch[1].trim() : xpath;
+
           const element = document.evaluate(
-            data.xpath,
+            cleanedXPath,
             document,
             null,
             XPathResult.FIRST_ORDERED_NODE_TYPE,
@@ -48,12 +52,52 @@ const ChatBot = () => {
           if (element) {
             element.scrollIntoView({ behavior: "smooth", block: "center" });
             element.style.outline = "2px solid red";
+
+            // Different element actions
+            if (element.tagName === "SELECT") {
+              let optionFound = false;
+              for (let option of element.options) {
+                if (option.text === fill_value || option.value === fill_value) {
+                  option.selected = true;
+                  optionFound = true;
+                  break;
+                }
+              }
+              element.dispatchEvent(new Event("change", { bubbles: true }));
+
+              console.log(
+                optionFound
+                  ? `Selected option: ${fill_value}`
+                  : `Option '${fill_value}' not found`
+              );
+            } else if (element.type === "radio" || element.type === "checkbox") {
+              element.checked = true;
+              element.dispatchEvent(new Event("change", { bubbles: true }));
+              console.log(`Checked: ${fill_value}`);
+            } else if (
+              element.type === "submit" ||
+              element.tagName === "BUTTON" ||
+              action?.toLowerCase() === "click"
+            ) {
+              element.click();
+              console.log(`Clicked button: ${cleanedXPath}`);
+            } else {
+              // Fill input fields
+              if (fill_value !== undefined) {
+                element.value = fill_value;
+                element.dispatchEvent(new Event("input", { bubbles: true }));
+                console.log(`Filled: ${fill_value}`);
+              }
+            }
+
             setTimeout(() => {
               element.style.outline = "";
-            }, 2000);
+            }, 1500);
+          } else {
+            console.warn("Element not found for XPath:", cleanedXPath);
           }
         } catch (err) {
-          console.error("Error applying XPath:", err);
+          console.error("Error applying XPath logic:", err);
         }
       }
     } catch (error) {
