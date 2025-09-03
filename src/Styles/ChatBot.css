@@ -1,0 +1,97 @@
+
+.chatbox-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  font-family: Arial, sans-serif;
+}
+
+.chatbox-toggle {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: background 0.2s ease;
+}
+
+.chatbox-toggle:hover {
+  background: #1d4ed8;
+}
+
+.chatbox {
+  margin-top: 10px;
+  width: 320px;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+
+.chatbox-header {
+  background: #2563eb;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  padding: 8px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.chatbox-body {
+  padding: 8px;
+  height: 200px;
+  overflow-y: auto;
+  background: #f9f9f9;
+}
+
+.chatbox-body .user {
+  color: #111111;
+  font-weight: bold;
+  margin: 4px 0;
+}
+
+.chatbox-body .bot {
+  color: #059669;
+  margin: 4px 0;
+}
+
+.chatbox-body .xpath {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.chatbox-input {
+  display: flex;
+  border-top: 1px solid #ddd;
+}
+
+.chatbox-input input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  border-bottom-left-radius: 12px;
+}
+
+.chatbox-input button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 0 16px;
+  cursor: pointer;
+  border-bottom-right-radius: 12px;
+  transition: background 0.2s ease;
+}
+
+.chatbox-input button:hover {
+  background: #1d4ed8;
+}
