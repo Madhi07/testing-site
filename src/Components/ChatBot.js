@@ -12,7 +12,7 @@ const ChatBot = () => {
     setMessages((prev) => [...prev, { from: "user", text: input }]);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/ask", {
+      const response = await fetch("https://a78098285834.ngrok-free.app/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ddt_id:"50",question: input }),
